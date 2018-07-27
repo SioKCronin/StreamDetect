@@ -20,9 +20,10 @@ of trigger words on streaming text data.
 
 #### Pipeline
 * S3 (Wikipedia article updates since 2008)
-* Solr-Lucene & Spark (search stream of article recent changes for hot words)
-* Redis (record incidents of hot word use along with usr_id and article_id)
-* Dash (display hot word analytics)
+* Storm (distribute to workers)
+* Luwak (search)
+* Redis (cache hot word, usr_id, article_id counts)
+* Dash (analytics)
 
 ### Data
 
