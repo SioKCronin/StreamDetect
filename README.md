@@ -20,10 +20,16 @@ of trigger words on streaming text data.
 * Redis (cache hot word, usr_id, article_id counts)
 * Dash (analytics)
 
+### Development
+* Terraform (hardware provisioning)
+* Ansible (configuration management)
+* Boto3 (AWS cluster deployment)
+* Great Expectations (pipeline testing)
+
 ### Data
 
 #### About
-* 31 million registered users, although only 119K active users (at least 1 edit/month)
+* 31 million registered users, although only about 119K active users making at least 1 edit/month
 * 3TB of revision log data (XML)
 * 10-20 changes/second from the RCFeed (can speed up using the historical data for velocity)
 * 29 million pages (reduce to 10 million that are in the encyclopedia, and 4.2 million are articles, stubs and 
