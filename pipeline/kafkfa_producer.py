@@ -5,8 +5,11 @@ from time import sleep
 
 if __name__=='__main__':
 
+    # Kafka host and port
     host = '52.11.70.247' 
     port = 9092
+
+    # Need 2 topics: docs and query
 
     # arg parsing
     parser = argparse.ArgumentParser(description="Feed Kafka data from file")
