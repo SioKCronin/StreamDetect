@@ -1,12 +1,23 @@
 # _*_ coding: utf-8 _*_
 
+import os
+from datetime import datetime
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
+from flask_caching import Cache
+from kafka import SimpleProducer, KafkaClient
 
-app = dash.Dash()
+app = dash.Dash(__name__)
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'redis',
+    'CACHE_REDIS_URL': os.environ.get('REDUS_URL', '')
+})
+app.config.suppress_callback_exceptions = True
 
+timeout = 20
 app.layout = html.Div(children=[
     html.H1(children='Sift'),
     html.Div(children='''Real-time search of streaming text data'''),
@@ -18,8 +29,8 @@ app.layout = html.Div(children=[
         id='example-graph',
         figure={
             'data': [
-                {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
-                {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montreal'},
+                {'x': [1], 'y': [4], 'type': 'bar', 'name': 'SF'},
+                {'x': [1], 'y': [2], 'type': 'bar', 'name': u'Montreal'},
             ],
             'layout': {
                 'title': 'Dash Data Visualization'
@@ -28,10 +39,12 @@ app.layout = html.Div(children=[
     )
 ])
 
-@app.callback(Output('output-state', 'children'),
+@app.callback(
+    Output('flask-cache-memoized-children', 'children'),
     [Input('submit-button', 'n_clicks')],
     [State('input-1-state', 'value'),
      State('input-2-state', 'value')])
+@cache.memoize(timeout=timeout) # in seconds
 
 def update_output_div(n_clicks, input1, input2):
     return u'''
