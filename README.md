@@ -10,11 +10,11 @@ static setting we typically create an index, which is often not feasible in high
 to explore reverse search strategies where queries are indexed and matched against a tokenized document field. Challenges
 emerge as additional processing is added beyond identifying matches, as well as handling complex queries. 
 
-### Core Technologies
-
+### Architecture
 * **AWS (S3)**: Data storage
 * **Kakfa-Spark Streaming**: Scalable, fault-tolerant, low-latency streaming
 * **Elasticsearch (built on Lucene**: Text indexing (Percolator queries) and tokenization
+* **Redis**: Match cacheing
 
 ### Development technology
 * Boto3 (AWS cluster provisioning and deployment)
@@ -30,3 +30,6 @@ disambiguation pages)
 #### Data
 * All data from inception to 2008: https://snap.stanford.edu/data/wiki-meta.html
 * Archived data: https://dumps.wikimedia.org/enwiki/latest/
+
+#### Specs/Constraints
+* Presently sift can return match results at a rate of 0 records/second (room for improvement!)
