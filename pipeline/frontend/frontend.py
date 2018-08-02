@@ -1,7 +1,6 @@
 # _*_ coding: utf-8 _*_
 
 import os
-from datetime import datetime
 import redis
 
 import dash
@@ -11,14 +10,20 @@ from dash.dependencies import Input, Output, State
 from flask_caching import Cache
 from kafka import SimpleProducer, KafkaClient
 
-# Create app instance
+from datetime import datetime
+import time
+
 app = dash.Dash(__name__)
+server = app.server
 
 # Establish Redis cache connection
-cache = Cache(app.server, config={
+CACHE_CONFIG = {
+    # try 'filesystem' if you don't want to setup redis
     'CACHE_TYPE': 'redis',
-    'CACHE_REDIS_URL': os.environ.get('REDUS_URL', '')
-})
+    'CACHE_REDIS_URL': os.environ.get('REDIS_URL', 'localhost:6379')
+}
+cache = Cache()
+cache.init_app(app.server, config=CACHE_CONFIG)
 
 # Config settings
 app.config.suppress_callback_exceptions = True
@@ -26,23 +31,16 @@ timeout = 20
 
 # App layout
 app.layout = html.Div(children=[
-    html.H1(children='Sift'),
-    html.Div(children='''Real-time search of streaming text data'''),
-    dcc.Input(id='input-1-state', type='text', value='Montreal'),
+    html.H1(children='Sift: Realtime streaming search'),
+    dcc.Dropdown(
+        id='input-1-state', 
+        options=[{'label': s[0], 'value': str(s[1])}
+                 for s in [["data", "data"], ["engineering", "engineering"]]],
+        value=['data', 'engineering'],
+        multi=True
+    ),
     html.Button(id='submit-button', n_clicks=0, children='Submit'),
     html.Div(id='output-state'),
-    dcc.Graph(
-        id='stream_of_matches',
-        figure={
-            'data': [
-                {'x': [1], 'y': [4], 'type': 'bar', 'name': 'SF'},
-                {'x': [1], 'y': [2], 'type': 'bar', 'name': u'Montreal'},
-            ],
-            'layout': {
-                'title': 'Sift: documents where query found a match'
-            }
-        }
-    )
 ])
 
 @app.callback(

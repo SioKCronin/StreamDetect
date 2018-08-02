@@ -3,33 +3,31 @@ import boto3
 import botocore
 import json
 import redis
-from datetime import datetime
-from kafka import KafkaProducer
-import time
-
-def main():
-
-    #docs = ['this', 'is', 'a', 'test']
-    print("got here")
-    producer = KafkaProducer(bootstrap_servers = 'ec2-52-13-241-228.us-west-2.compute.amazonaws.com:9092')
-
-    for i in range(1000):
-        print(i)
-        producer.send('docs', b'word')
-        producer.flush()
-        time.sleep(10)
-
-if __name__ == '__main__':
-    main()
-
-'''
 import threading, logging, time
 import multiprocessing
+from datetime import datetime
+from kafka.producer import KafkaProducer
+from time import sleep
+
+from kafka import KafkaConsumer
+from pyspark import SparkContext, SparkConf
+from pyspark.streaming import StreamingContext
+from pyspark.streaming.kafka import KafkaUtils
+
+kafka_ip = '34.212.143.68'
 
 BUCKET_NAME = 'wikipedia-raw-xml-data'
 DOCS = 'MOCK_DATA.json'
 QUERIES = 'mvp_queries.json'
 ip_addr = '34.212.143.68' 
+query = "test"
+
+# Create topic
+
+
+
+
+
 
 class Producer(threading.Thread):
 
@@ -135,4 +133,3 @@ if __name__ == "__main__":
 #    prod = Producer(ip_addr)
 #    prod.read_from_s3(DOCS)
 #    prod.read_from_s3(QUERIES)
-'''

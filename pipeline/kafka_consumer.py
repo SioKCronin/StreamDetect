@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import redis
+
 from datetime import datetime
 from kafka import KafkaConsumer
 
@@ -9,33 +10,29 @@ from pyspark import SparkContext, SparkConf
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 
-kafka_ip = '34.212.143.68'
+if __name__ == "__main__":
 
-def Streamer(self):
+    query = KafkaConsumer('query', bootstrap_servers='ec2-52-13-241-228.us-west-2.compute.amazonaws.com:9092')
+    docs = KafkaConsumer('docs', bootstrap_servers='ec2-52-13-241-228.us-west-2.compute.amazonaws.com:9092')
 
     # Register the spark context
-    conf = SparkConf().setAppName("stream")
-    sc = SparkContext(appName="StreamingSearch")
-    ssc = StreamingContext(sc, 5)
+    #sc = SparkContext(appName="Sift")
+    #ssc = StreamingContext(sc, 5)
 
-    # Get data stream from kafka topic
-    docs = KafkaConsumer('docs',group_id='stream', bootstrap_servers=[kafka_ip])
-    queries = KafkaConsumer('docs',group_id='stream', bootstrap_servers=[kafka_ip])
-    #docs = KafkaUtils.createDirectStream(ssc, zkeeper_id, ["docs"], {"bootstrap.servers": kafka_broker_ip})
-    #queries = KafkaUtils.createDirectStream(ssc, ["queries"], {"boostrap.servers": kafka_broker_ip})
+    for msg in docs:
+        print(msg)
 
-    return docs
+    #zoo, topic = sys.argv[1:]
+    #kvs = KafkaUtils.createStream(ssc, zkQuorum, "spark-streaming-consumer", {topic: 1})
+    #lines = kvs.map(lambda x: x[1])
+    #counts = lines.flatMap(lambda line: line.split(" ")) \
+    #    .map(lambda word: (word, 1)) \
+    #    .reduceByKey(lambda a, b: a+b)
+    #counts.pprint()
 
-    #for message in docs:
-    #    print(message)
+    ## Get data stream from kafka topic
+    ##docs = KafkaConsumer('docs',group_id='stream', bootstrap_servers=[kafka_ip])
+    ##queries = KafkaConsumer('docs',group_id='stream', bootstrap_servers=[kafka_ip])
 
-    # Lucene tokenizing
-    # Lucene query indexing
-    # Publish matches to Redis
-
-    #ssc.start()
-    #ssc.awaitTermination()
-
-if __name__ == '__main__':
-    print(Streamer(kafka_ip))
-
+    ssc.start()
+    ssc.awaitTermination()
