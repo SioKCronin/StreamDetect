@@ -1,51 +1,35 @@
 # sift
 
-### Objective
-Provide a clean, scalable architecture for real-time search on streaming text data.
+### Overview
+Sift provides a clean, scalable architecture for real-time search on streaming text data. Implementing realtime search can 
+provide companies with the ability to monitor high velocity text feeds, with applications ranging from media
+monitoring to anti-vandelism/abuse detection.
 
-### Business case
-Companies like Wikipedia, Twitter, Reddit, and Youtube provide crowd-sourced content, and thare therefore 
-hotbeds for community conflict.  These companies require systems to flag early signs of abuse 
-and bullying, so that conflicts can be curbed. Sift provides a clean, scalable architecture for real-time detection 
-of trigger words on streaming text data.
+Achieving near real-time search in high volume streaming text data. For example, when we implement document search in a 
+static setting we typically create an index, which is often not feasible in high velocity streams. This has led developers
+to explore reverse search strategies where queries are indexed and matched against a tokenized document field. Challenges
+emerge as additional processing is added beyond identifying matches, as well as handling complex queries. 
 
-### Goals
-* Achieve near real-time search of a streaming text data source. 
-* Explore stream architecture and optimization. 
+### Architecture
+* **AWS (S3)**: Data storage
+* **Kakfa-Spark Streaming**: Scalable, fault-tolerant, low-latency streaming
+* **Elasticsearch (built on Lucene**: Text indexing (Percolator queries) and tokenization
+* **Redis**: Match cacheing
 
-### Pipeline
-* S3 (Wikipedia article revisions 2000-2008)
-* Kafka (stream managemnet)
-* Storm (distributive processing) with Lucene-Luwak (search)
-* Redis (cache hot word, usr_id, article_id counts)
-* Dash (analytics)
-
-### Development
-* Terraform (hardware provisioning)
-* Ansible (configuration management)
-* Boto3 (AWS cluster deployment)
+### Development technology
+* Boto3 (AWS cluster provisioning and deployment)
 * Great Expectations (pipeline testing)
 
-### Data
-
-#### About
+#### Wikipedia revision logs
 * 31 million registered users, although only about 119K active users making at least 1 edit/month
 * 3TB of revision log data (XML)
 * 10-20 changes/second from the RCFeed (can speed up using the historical data for velocity)
 * 29 million pages (reduce to 10 million that are in the encyclopedia, and 4.2 million are articles, stubs and 
 disambiguation pages) 
 
-#### Downloads
+#### Data
 * All data from inception to 2008: https://snap.stanford.edu/data/wiki-meta.html
-* Latest dump: https://dumps.wikimedia.org/enwiki/latest/
+* Archived data: https://dumps.wikimedia.org/enwiki/latest/
 
-#### Fields
-* REVISION article_id rev_id article_title timestamp [ip:]username user_id
-* CATEGORY list of categories
-* IMAGE list of images (each listed as many times as it occurs)
-* MAIN through OTHER cross-references to pages in other namespaces
-* EXTERNAL hyperlinks to pages outside Wikipedia
-* TEMPLATE list of all templates (each listed as many times as it occurs)
-* COMMENT contains the comments as entered by the author
-* MINOR whether the edit was marked as minor by the author
-* TEXTDATA word count of revision's plain text
+#### Specs/Constraints
+* Presently sift can return match results at a rate of 0 records/second (room for improvement!)
