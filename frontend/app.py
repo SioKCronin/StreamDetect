@@ -2,6 +2,7 @@
 
 import os
 from datetime import datetime
+import redis
 
 import dash
 import dash_core_components as dcc
@@ -10,30 +11,35 @@ from dash.dependencies import Input, Output, State
 from flask_caching import Cache
 from kafka import SimpleProducer, KafkaClient
 
+# Create app instance
 app = dash.Dash(__name__)
+
+# Establish Redis cache connection
 cache = Cache(app.server, config={
     'CACHE_TYPE': 'redis',
     'CACHE_REDIS_URL': os.environ.get('REDUS_URL', '')
 })
-app.config.suppress_callback_exceptions = True
 
+# Config settings
+app.config.suppress_callback_exceptions = True
 timeout = 20
+
+# App layout
 app.layout = html.Div(children=[
     html.H1(children='Sift'),
     html.Div(children='''Real-time search of streaming text data'''),
     dcc.Input(id='input-1-state', type='text', value='Montreal'),
-    dcc.Input(id='input-2-state', type='text', value='Canada'),
     html.Button(id='submit-button', n_clicks=0, children='Submit'),
     html.Div(id='output-state'),
     dcc.Graph(
-        id='example-graph',
+        id='stream_of_matches',
         figure={
             'data': [
                 {'x': [1], 'y': [4], 'type': 'bar', 'name': 'SF'},
                 {'x': [1], 'y': [2], 'type': 'bar', 'name': u'Montreal'},
             ],
             'layout': {
-                'title': 'Dash Data Visualization'
+                'title': 'Sift: documents where query found a match'
             }
         }
     )
@@ -42,8 +48,7 @@ app.layout = html.Div(children=[
 @app.callback(
     Output('flask-cache-memoized-children', 'children'),
     [Input('submit-button', 'n_clicks')],
-    [State('input-1-state', 'value'),
-     State('input-2-state', 'value')])
+    [State('input-1-state', 'value')])
 @cache.memoize(timeout=timeout) # in seconds
 
 def update_output_div(n_clicks, input1, input2):
