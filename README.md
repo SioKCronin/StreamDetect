@@ -11,10 +11,10 @@ to explore reverse search strategies where queries are indexed and matched again
 emerge as additional processing is added beyond identifying matches, as well as handling complex queries. 
 
 ### Architecture
-* **AWS (S3)**: Data storage
-* **Kakfa-Spark Streaming**: Scalable, fault-tolerant, low-latency streaming
-* **Elasticsearch (built on Lucene**: Text indexing (Percolator queries) and tokenization
-* **Redis**: Match cacheing
+* **AWS (S3)**: Data
+* **Flask**: Frontend
+* **Kakfa Streams**: Scalable, fault-tolerant, low-latency streaming
+* **Elasticsearch-Lucene**: Text indexing (Percolator queries) and tokenization
 
 ### Development technology
 * Boto3 (AWS cluster provisioning and deployment)
